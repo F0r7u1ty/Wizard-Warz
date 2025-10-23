@@ -19,6 +19,7 @@ public class InputManager : MonoBehaviour
         onFoot.Jump.performed += ctx => motor.Jump();
         look = GetComponent<PlayerLook>();
         onFoot.Crouch.performed += ctx => motor.Crouch();
+        onFoot.Teleport.performed += ctx => motor.Teleport();
     }
 
     // Update is called once per frame

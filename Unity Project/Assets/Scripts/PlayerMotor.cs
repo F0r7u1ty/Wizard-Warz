@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections; // Required for Coroutines
 
 public class PlayerMotor : MonoBehaviour
 {
@@ -13,10 +14,20 @@ public class PlayerMotor : MonoBehaviour
     private float crouchTimer;
     private float crouchSpeed = 11f;
 
+    [Header("Teleport Settings")]
+    public Transform playerCamera;
+    public float teleportDistance = 10f; // How far to teleport
+    // *** NEW: Public variable for the travel time (set in Inspector) ***
+    public float teleportDuration = 0.25f; // Duration of the teleport in seconds
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         controller = GetComponent<CharacterController>();
+        if (playerCamera == null)
+        {
+            Debug.LogError("PlayerCamera Transform is not assigned to the PlayerMotor script in the Inspector.");
+        }
     }
 
     // Update is called once per frame
@@ -25,6 +36,7 @@ public class PlayerMotor : MonoBehaviour
         isGrounded = controller.isGrounded;
         if (lerpCrouch)
         {
+            // ... (Crouch logic remains the same)
             crouchTimer += Time.deltaTime;
             float p = crouchTimer / 1;
             p *= p;
@@ -44,14 +56,20 @@ public class PlayerMotor : MonoBehaviour
         }
     }
 
-    //receive inputs for InputManager.cs and apply them to character controller
+    // ... (ProcessMove and Jump functions remain the same)
+
     public void ProcessMove(Vector2 input)
     {
+        if (!controller.enabled)
+        {
+            // If the controller is disabled (e.g., during a teleport),
+            // we exit early and do nothing.
+            return;
+        }
         Vector3 moveDirection = Vector3.zero;
         moveDirection.x = input.x;
         moveDirection.z = input.y;
         float currentSpeed = crouching ? crouchSpeed : speed;
-        Debug.Log("currentSpeed: " + currentSpeed);
         controller.Move(transform.TransformDirection(moveDirection) * currentSpeed * Time.deltaTime);
         playerVelocity.y += gravity * Time.deltaTime;
         if (isGrounded && playerVelocity.y < 0)
@@ -59,7 +77,6 @@ public class PlayerMotor : MonoBehaviour
             playerVelocity.y = -2f;
         }
         controller.Move(playerVelocity * Time.deltaTime);
-        //Debug.Log(playerVelocity.y);
     }
 
     public void Jump()
@@ -75,5 +92,69 @@ public class PlayerMotor : MonoBehaviour
         crouching = !crouching;
         crouchTimer = 0;
         lerpCrouch = true;
+    }
+
+    // *** MODIFIED: Start the Coroutine instead of instant movement ***
+    public void Teleport()
+    {
+        if (playerCamera == null) return;
+
+        Vector3 direction = playerCamera.forward;
+        Vector3 rayDirection = direction.normalized;
+
+        // 1. Raycast Check
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, rayDirection, out hit, teleportDistance))
+        {
+            if (hit.collider.CompareTag("boundaries"))
+            {
+                Debug.Log("Teleport blocked by 'boundaries' wall.");
+                return;
+            }
+        }
+        Debug.DrawRay(transform.position, rayDirection * teleportDistance, Color.red);
+
+        // 2. Start the Coroutine for movement over time
+        StartCoroutine(TeleportSequence(transform.position + direction * teleportDistance));
+    }
+
+    // *** NEW: Coroutine for smooth movement ***
+    private IEnumerator TeleportSequence(Vector3 targetPosition)
+    {
+        Vector3 startPosition = transform.position;
+        float elapsedTime = 0f;
+
+        // Ensure the CharacterController is disabled during the move to faze through walls
+        controller.enabled = false;
+
+        // Loop until the duration is met
+        while (elapsedTime < teleportDuration)
+        {
+            // Update time
+            elapsedTime += Time.deltaTime;
+
+            // Calculate interpolation value (0 to 1)
+            float t = elapsedTime / teleportDuration;
+
+            // Optional: Smooth the movement using a curve like Quadratic (t * t) or Cubic (t * t * t)
+            t = t * t;
+
+            // Interpolate the position (only X and Z, keeping the current Y to avoid phasing through floor)
+            float newX = Mathf.Lerp(startPosition.x, targetPosition.x, t);
+            float newZ = Mathf.Lerp(startPosition.z, targetPosition.z, t);
+
+            transform.position = new Vector3(newX, startPosition.y, newZ);
+
+            // Wait until the next frame
+            yield return null;
+        }
+
+        // Finalize the position
+        transform.position = new Vector3(targetPosition.x, startPosition.y, targetPosition.z);
+
+        // Re-enable the CharacterController collision
+        controller.enabled = true;
+
+        Debug.Log("Teleport sequence complete. Final position: " + transform.position);
     }
 }
