@@ -115,7 +115,7 @@ public class PlayerMotor : MonoBehaviour
         Debug.DrawRay(transform.position, rayDirection * teleportDistance, Color.red);
 
         //note: the function still exhausts mana, doing again after the if statement will double the exhaust
-        if (GameData.ExhaustPlayerMana(20) == 0) {return;}
+        if (!GameData.ExhaustPlayerMana(20)) {return;}
         // 2. Start the Coroutine for movement over time
         StartCoroutine(TeleportSequence(transform.position + direction * teleportDistance));
     }
