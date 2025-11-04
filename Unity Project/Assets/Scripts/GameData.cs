@@ -5,10 +5,11 @@ using UnityEngine;
 public static class GameData
 {
     // primitives
-    private const int MAX_PLAYER_HEALTH = 100;
+    public const int MAX_PLAYER_HEALTH = 100;
     public static int playerHealth = MAX_PLAYER_HEALTH;
-    private const int MAX_PLAYER_MANA = 100;
+    public const int MAX_PLAYER_MANA = 100;
     public static int playerMana = MAX_PLAYER_MANA;
+    public static int numJumps = 0;
 
     //health functions
     public static void DamagePlayerHealth(int amount)

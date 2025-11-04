@@ -1,5 +1,6 @@
 using UnityEngine;
-using System.Collections; // Required for Coroutines
+using System.Collections;
+using Unity.VisualScripting; // Required for Coroutines
 
 public class PlayerMotor : MonoBehaviour
 {
@@ -13,7 +14,10 @@ public class PlayerMotor : MonoBehaviour
     private bool crouching;
     private float crouchTimer;
     private float crouchSpeed = 11f;
-
+    private const float REGEN_DELAY = 0.6f; // Time after use before regen starts (0.6s)
+    private const float MANA_PER_SECOND = 6f; // Regeneration rate (6 mana per second)
+    private Coroutine regenCoroutine;
+    private float manaRegenAccumulator = 0f;
     [Header("Teleport Settings")]
     public Transform playerCamera;
     public float teleportDistance = 10f; // How far to teleport
@@ -28,6 +32,7 @@ public class PlayerMotor : MonoBehaviour
         {
             Debug.LogError("PlayerCamera Transform is not assigned to the PlayerMotor script in the Inspector.");
         }
+        regenCoroutine = StartCoroutine(ManaRegenRoutine());
     }
 
     // Update is called once per frame
@@ -84,6 +89,13 @@ public class PlayerMotor : MonoBehaviour
         if (isGrounded)
         {
             playerVelocity.y = Mathf.Sqrt(jumpHeight * -3.0f * gravity);
+            GameData.numJumps = 1;
+        } else if (GameData.playerMana >= 3 && GameData.numJumps == 1)
+        {
+            GameData.playerMana -= 3;
+            GameData.numJumps = 2;
+            playerVelocity.y = Mathf.Sqrt(jumpHeight * -3.0f * gravity); //can potentially change this so the 2nd jump is more or less potent than normal
+            ResetRegenDelay();
         }
     }
 
@@ -115,7 +127,8 @@ public class PlayerMotor : MonoBehaviour
         Debug.DrawRay(transform.position, rayDirection * teleportDistance, Color.red);
 
         //note: the function still exhausts mana, doing again after the if statement will double the exhaust
-        if (!GameData.ExhaustPlayerMana(20)) {return;}
+        if (!GameData.ExhaustPlayerMana(10)) {return;}
+        ResetRegenDelay();
         // 2. Start the Coroutine for movement over time
         StartCoroutine(TeleportSequence(transform.position + direction * teleportDistance));
     }
@@ -159,4 +172,54 @@ public class PlayerMotor : MonoBehaviour
 
         Debug.Log("Teleport sequence complete. Final position: " + transform.position);
     }
+    // --- NEW: Reset/Restart the Mana Regeneration Coroutine ---
+    private void ResetRegenDelay()
+    {
+        manaRegenAccumulator = 0f;
+        // Stop the current (potentially delayed or actively regenerating) coroutine
+        if (regenCoroutine != null)
+        {
+            StopCoroutine(regenCoroutine);
+        }
+
+        // Start a new coroutine, which will immediately wait for the delay
+        regenCoroutine = StartCoroutine(ManaRegenRoutine());
+    }
+
+    // --- NEW: Mana Regeneration Coroutine ---
+    private IEnumerator ManaRegenRoutine()
+    {
+        // 1. Wait for the required delay after mana consumption
+        yield return new WaitForSeconds(REGEN_DELAY);
+
+        // 2. Start regenerating mana continuously
+        while (GameData.playerMana < GameData.MAX_PLAYER_MANA)
+        {
+            // Calculate fractional mana to add this frame
+            float manaToAccumulate = MANA_PER_SECOND * Time.deltaTime;
+
+            // Add the fractional mana to the accumulator
+            manaRegenAccumulator += manaToAccumulate;
+
+            // Check if we have accumulated at least 1 full mana point
+            if (manaRegenAccumulator >= 1f)
+            {
+                // Calculate the integer amount to charge (e.g., if accumulator is 1.9, charge 1)
+                int manaToCharge = Mathf.FloorToInt(manaRegenAccumulator);
+
+                // Call the static method to update the global mana
+                GameData.ChargePlayerMana(manaToCharge);
+
+                // Deduct the charged integer amount from the accumulator
+                manaRegenAccumulator -= manaToCharge;
+            }
+
+            // Wait until the next frame
+            yield return null;
+        }
+
+        // When mana is full, ensure any remaining fractional mana is reset
+        manaRegenAccumulator = 0f;
+    }
+    //primary and secondary fire need to be added here:
 }
