@@ -23,25 +23,28 @@ public class WizardStaff : MonoBehaviour
 
     void Primary()
     {
-        RaycastHit hit;
-        if (Physics.Raycast(cam.transform.position, cam.transform.forward, out hit, range))
+        if (GameData.ExhaustPlayerMana(1))
         {
-            //Debug.Log(hit.transform.name);
-            if (hit.transform.tag == "MeleeEnemy")
+            RaycastHit hit;
+            if (Physics.Raycast(cam.transform.position, cam.transform.forward, out hit, range))
             {
-                MeleeAI target = hit.transform.GetComponent<MeleeAI>();
-                target.TakeDamage(damage);
-                Debug.Log("Melee Enemy is hit");
-            }
-            if (hit.transform.tag == "RangeEnemy")
-            {
-                rangedAI target = hit.transform.GetComponent<rangedAI>();
-                target.TakeDamage(damage);
-                Debug.Log("Ranged Enemy is hit");
-            }
+                //Debug.Log(hit.transform.name);
+                if (hit.transform.tag == "MeleeEnemy")
+                {
+                    MeleeAI target = hit.transform.GetComponent<MeleeAI>();
+                    target.TakeDamage(damage);
+                    Debug.Log("Melee Enemy is hit");
+                }
+                if (hit.transform.tag == "RangeEnemy")
+                {
+                    rangedAI target = hit.transform.GetComponent<rangedAI>();
+                    target.TakeDamage(damage);
+                    Debug.Log("Ranged Enemy is hit");
+                }
 
-            GameObject impact = Instantiate(impactParticles, hit.point, Quaternion.LookRotation(hit.normal));
-            Destroy(impact, 1f);
+                GameObject impact = Instantiate(impactParticles, hit.point, Quaternion.LookRotation(hit.normal));
+                Destroy(impact, 1f);
+            }
         }
     }
 }
