@@ -6,7 +6,7 @@ public class InputManager : MonoBehaviour
 {
     private PlayerInput playerInput;
     public PlayerInput.OnFootActions onFoot;
-    private PlayerMotor motor;
+    private PlayerMotor motor; // used to be private PlayerMotor motor;
     private PlayerLook look;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -14,12 +14,13 @@ public class InputManager : MonoBehaviour
     {
         playerInput = new PlayerInput();
         onFoot = playerInput.OnFoot;
-        motor = GetComponent<PlayerMotor>();
+        motor = GetComponent<PlayerMotor>(); // used to be: motor = GetComponent<PlayerMotor>();
         //anytime onFoot.jump performed, use callback context to call motor.Jump()
         onFoot.Jump.performed += ctx => motor.Jump();
         look = GetComponent<PlayerLook>();
         onFoot.Crouch.performed += ctx => motor.Crouch();
-        onFoot.Teleport.performed += ctx => motor.Teleport();
+        onFoot.Teleport.performed += ctx => motor.Teleport(onFoot.Movement.ReadValue<Vector2>());
+        // used to be: onFoot.Teleport.performed += ctx => motor.Teleport();
     }
 
     // Update is called once per frame
