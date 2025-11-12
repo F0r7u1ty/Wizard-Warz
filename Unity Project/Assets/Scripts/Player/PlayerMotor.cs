@@ -175,7 +175,7 @@ public class PlayerMotor : MonoBehaviour
 
         // 4. Mana Check and Cost
         if (!GameData.ExhaustPlayerMana(10)) { return; }
-        GameData.ResetRegenDelay();
+        //GameData.ResetRegenDelay();
 
         // 5. Start the Coroutine for movement over time
         StartCoroutine(TeleportSequence(actualTarget));
