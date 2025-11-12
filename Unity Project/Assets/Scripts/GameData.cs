@@ -13,6 +13,10 @@ public static class GameData
     public static int numJumps = 0;
     private static float manaRegenAccumulator = 0f;
 
+    public static float REGEN_DELAY = 0.6f;
+
+    public static float MANA_PER_SECOND = 10f;
+
     //health functions
     public static void DamagePlayerHealth(int amount)
     {
