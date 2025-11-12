@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
-using Unity.VisualScripting; // Required for Coroutines
+//using Unity.VisualScripting; // Required for Coroutines
 
 public static class GameData
 {
@@ -11,7 +11,7 @@ public static class GameData
     public const int MAX_PLAYER_MANA = 100;
     public static int playerMana = MAX_PLAYER_MANA;
     public static int numJumps = 0;
-    private float manaRegenAccumulator = 0f;
+    private static float manaRegenAccumulator = 0f;
 
     //health functions
     public static void DamagePlayerHealth(int amount)
@@ -50,8 +50,8 @@ public static class GameData
         else { return false; }
     }
 
-    // --- Mana Regen
-    public void ResetRegenDelay()
+   /* // --- Mana Regen
+    public static void ResetRegenDelay()
     {
         manaRegenAccumulator = 0f;
         if (regenCoroutine != null)
@@ -61,7 +61,7 @@ public static class GameData
         regenCoroutine = StartCoroutine(ManaRegenRoutine());
     }
 
-    private IEnumerator ManaRegenRoutine()
+    private static IEnumerator ManaRegenRoutine()
     {
         // 1. Wait for the required delay after mana consumption
         yield return new WaitForSeconds(REGEN_DELAY);
@@ -83,5 +83,15 @@ public static class GameData
         }
 
         manaRegenAccumulator = 0f;
+    } */
+    // The static method delegates the coroutine execution to the Helper
+    public static void ResetRegenDelay()
+    {
+        // Must ensure the Helper exists in the scene and is initialized
+        if (GameDataRegenHelper.Instance != null)
+        {
+            GameDataRegenHelper.Instance.DoResetRegenDelay();
+        }
+        // else: Log an error if the helper isn't in the scene
     }
 }
