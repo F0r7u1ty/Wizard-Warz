@@ -15,7 +15,7 @@ public static class GameData
 
     public static float REGEN_DELAY = 0.6f;
 
-    public static float MANA_PER_SECOND = 10f;
+    public static float MANA_PER_SECOND = 15f;
 
     //health functions
     public static void DamagePlayerHealth(int amount)
