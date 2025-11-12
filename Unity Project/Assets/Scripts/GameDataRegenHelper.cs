@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using Unity.VisualScripting;
 
 // Place this on a GameObject in your scene (e.g., a "Game Manager" object)
 public class GameDataRegenHelper : MonoBehaviour

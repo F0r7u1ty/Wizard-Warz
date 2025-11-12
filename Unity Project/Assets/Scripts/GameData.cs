@@ -11,7 +11,7 @@ public static class GameData
     public const int MAX_PLAYER_MANA = 100;
     public static int playerMana = MAX_PLAYER_MANA;
     public static int numJumps = 0;
-    private static float manaRegenAccumulator = 0f;
+    public static float manaRegenAccumulator = 0f;
 
     public static float REGEN_DELAY = 0.6f;
 

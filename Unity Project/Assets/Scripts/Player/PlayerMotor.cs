@@ -34,7 +34,8 @@ public class PlayerMotor : MonoBehaviour
             Debug.LogError("PlayerCamera Transform is not assigned to the TestPlayerMotor script in the Inspector.");
         }
         // Start the continuous mana regeneration routine
-        regenCoroutine = StartCoroutine(GameData.ResetRegenDelay());
+        //regenCoroutine = StartCoroutine(GameData.ResetRegenDelay());
+        GameData.ResetRegenDelay();
     }
 
     // Update is called once per frame
