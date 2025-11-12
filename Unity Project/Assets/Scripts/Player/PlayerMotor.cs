@@ -34,7 +34,7 @@ public class PlayerMotor : MonoBehaviour
             Debug.LogError("PlayerCamera Transform is not assigned to the TestPlayerMotor script in the Inspector.");
         }
         // Start the continuous mana regeneration routine
-        regenCoroutine = StartCoroutine(ManaRegenRoutine());
+        regenCoroutine = StartCoroutine(GameData.ManaRegenRoutine());
     }
 
     // Update is called once per frame
@@ -92,10 +92,11 @@ public class PlayerMotor : MonoBehaviour
         }
         else if (GameData.playerMana >= 3 && GameData.numJumps == 1)
         {
-            GameData.playerMana -= 3;
+            GameData.ExhaustPlayerMana(3);
+            //GameData.playerMana -= 3;
             GameData.numJumps = 2;
             playerVelocity.y = Mathf.Sqrt(jumpHeight * -3.0f * gravity); //can potentially change this so the 2nd jump is more or less potent than normal
-            ResetRegenDelay();
+            //GameData.ResetRegenDelay();
         }
     }
 
@@ -173,14 +174,14 @@ public class PlayerMotor : MonoBehaviour
 
         // 4. Mana Check and Cost
         if (!GameData.ExhaustPlayerMana(10)) { return; }
-        ResetRegenDelay();
+        GameData.ResetRegenDelay();
 
         // 5. Start the Coroutine for movement over time
         StartCoroutine(TeleportSequence(actualTarget));
     }
 
     //coroutine
-    private IEnumerator TeleportSequence(Vector3 targetPosition)
+    public IEnumerator TeleportSequence(Vector3 targetPosition)
     {
         Vector3 startPosition = transform.position;
         float elapsedTime = 0f;
@@ -221,7 +222,7 @@ public class PlayerMotor : MonoBehaviour
     }
 
     // --- Mana Regen
-    private void ResetRegenDelay()
+   /* private void ResetRegenDelay()
     {
         manaRegenAccumulator = 0f;
         if (regenCoroutine != null)
@@ -253,6 +254,6 @@ public class PlayerMotor : MonoBehaviour
         }
 
         manaRegenAccumulator = 0f;
-    }
+    } */
     //primary and secondary fire need to be added here:
 }
