@@ -4,6 +4,7 @@ using System.Collections; // Still needed for the beam's duration coroutine
 public class WizardStaff : MonoBehaviour
 {
     public int primaryDamage = 4;
+    public int secondaryDamage = 8;
     public float range = 100f;
 
     // Fire rate logic is often unnecessary with GetMouseButtonDown,
@@ -16,11 +17,14 @@ public class WizardStaff : MonoBehaviour
     // The duration the beam will be visible (e.g., a quick flash)
     public float beamDuration = 0.05f;
 
-    private int leftMouseButton = 0;
+    private int leftMouseButton = 0, rightMouseButton = 1;
 
     public Camera cam;
 
     public GameObject impactParticles;
+
+    float SecondaryCounter = 0f;
+    bool canSecondaryExhaust = true;
 
     // Removed: private Coroutine drawBeamCoroutine; (No longer needed without hold-down fire issues)
 
@@ -44,11 +48,15 @@ public class WizardStaff : MonoBehaviour
             nextFireTime = Time.time + primaryFireRate;
             Primary();
         }
+        // Secondary
+        if (Input.GetMouseButton(rightMouseButton))
+        {
+            Secondary();
+        }
     }
-
     void Primary()
     {
-        if (GameData.ExhaustPlayerMana(9))
+        if (GameData.ExhaustPlayerMana(10))
         {
             RaycastHit hit;
             // The raycast is the hitscan logic (instant hit)
@@ -101,5 +109,57 @@ public class WizardStaff : MonoBehaviour
 
         // 4. Turn the Line Renderer off (beam disappears)
         lineRenderer.enabled = false;
+    }
+
+    void Secondary()
+    {
+        int manaRequirement = 10;
+        SecondaryCounter += Time.deltaTime;
+        if (SecondaryCounter >= .5f)
+        {
+            canSecondaryExhaust = true;
+            SecondaryCounter = 0f;
+        }
+        if (GameData.playerMana >= manaRequirement)
+        {
+            RaycastHit hit;
+            // The raycast is the hitscan logic (instant hit)
+            if (Physics.Raycast(cam.transform.position, cam.transform.forward, out hit, range))
+            {
+                // Apply damage (Hitscan Logic)
+                if (canSecondaryExhaust)
+                {
+                    GameData.ExhaustPlayerMana(manaRequirement);
+                    if (hit.transform.tag == "MeleeEnemy")
+                    {
+                        MeleeAI target = hit.transform.GetComponent<MeleeAI>();
+                        if (target != null) target.TakeDamage(secondaryDamage);
+                    }
+                    if (hit.transform.tag == "RangeEnemy")
+                    {
+                        rangedAI target = hit.transform.GetComponent<rangedAI>();
+                        if (target != null) target.TakeDamage(secondaryDamage);
+                    }
+                }
+
+                // Start the Coroutine to draw the beam
+                StartCoroutine(DrawBeam(hit.point));
+
+                // Instantiate the impact particles at the hit location
+                if (impactParticles != null)
+                {
+                    GameObject impact = Instantiate(impactParticles, hit.point, Quaternion.LookRotation(hit.normal));
+                    Destroy(impact, 1f);
+                }
+            }
+            else
+            {
+                // If the raycast doesn't hit anything within range, 
+                // draw the beam to the max range limit
+                Vector3 endPoint = cam.transform.position + cam.transform.forward * range;
+                StartCoroutine(DrawBeam(endPoint));
+            }
+            canSecondaryExhaust = false;
+        }
     }
 }
