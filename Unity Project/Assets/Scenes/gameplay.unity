@@ -6021,12 +6021,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   primaryDamage: 4
+  secondaryDamage: 8
   range: 100
   primaryFireRate: 0.2
   lineRenderer: {fileID: 551445027}
   beamDuration: 0.05
   cam: {fileID: 2028580612}
   impactParticles: {fileID: 65781841}
+  player: {fileID: 551444994}
 --- !u!1 &1044289531
 GameObject:
   m_ObjectHideFlags: 0

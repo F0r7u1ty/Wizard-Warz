@@ -4,7 +4,7 @@ using System.Collections; // Still needed for the beam's duration coroutine
 public class WizardStaff : MonoBehaviour
 {
     public int primaryDamage = 4;
-    public int secondaryDamage = 8;
+    public int secondaryDamage = 10;
     public float range = 100f;
 
     // Fire rate logic is often unnecessary with GetMouseButtonDown,
@@ -22,6 +22,7 @@ public class WizardStaff : MonoBehaviour
     public Camera cam;
 
     public GameObject impactParticles;
+    public GameObject player;
 
     float SecondaryCounter = 0f;
     bool canSecondaryExhaust = true;
@@ -52,6 +53,11 @@ public class WizardStaff : MonoBehaviour
         if (Input.GetMouseButton(rightMouseButton))
         {
             Secondary();
+        }
+        PlayerLook yummers = player.transform.GetComponent<PlayerLook>();
+        if (Input.GetMouseButtonUp(rightMouseButton))
+        {
+            yummers.slugCam = false;
         }
     }
     void Primary()
@@ -113,6 +119,8 @@ public class WizardStaff : MonoBehaviour
 
     void Secondary()
     {
+        PlayerLook yummers = player.transform.GetComponent<PlayerLook>();
+
         int manaRequirement = 10;
         SecondaryCounter += Time.deltaTime;
         if (SecondaryCounter >= .5f)
@@ -160,6 +168,12 @@ public class WizardStaff : MonoBehaviour
                 StartCoroutine(DrawBeam(endPoint));
             }
             canSecondaryExhaust = false;
+            // make slow the camera
+            yummers.slugCam = true;
+        }
+        else
+        {
+            yummers.slugCam = false;
         }
     }
 }
