@@ -101,11 +101,24 @@ public class PlayerMotor : MonoBehaviour
         }
     }
 
-    public void Crouch()
+    public void StartCrouch()
     {
-        crouching = !crouching;
-        crouchTimer = 0;
-        lerpCrouch = true;
+        if(!crouching)
+        {
+            crouching = true;
+            lerpCrouch = true;
+            crouchTimer = 0;
+        }
+    }
+
+    public void EndCrouch()
+    {
+        if (crouching)
+        {
+            crouching = false;
+            lerpCrouch = true;
+            crouchTimer = 0;
+        }
     }
 
     public void Teleport(Vector2 input)
@@ -166,7 +179,7 @@ public class PlayerMotor : MonoBehaviour
         {
             // We pull back by half the controller's radius to ensure the CharacterController doesn't start inside the wall.
             actualTarget = boundaryHit.point - direction * (controller.radius * 0.5f);
-            Debug.Log("Teleport hit 'boundaries' at distance: " + closestBoundaryDistance + ". Player will stop and push against the wall.");
+            //Debug.Log("Teleport hit 'boundaries' at distance: " + closestBoundaryDistance + ". Player will stop and push against the wall.");
         }
         // If no boundary was hit, actualTarget remains the full intendedTarget, allowing phasing through other objects.
 
@@ -219,42 +232,7 @@ public class PlayerMotor : MonoBehaviour
         // If the final position is near a wall, this immediately creates the "push against" effect.
         controller.enabled = true;
 
-        Debug.Log("Teleport sequence complete. Final position: " + transform.position);
+        //Debug.Log("Teleport sequence complete. Final position: " + transform.position);
     }
 
-    // --- Mana Regen
-   /* private void ResetRegenDelay()
-    {
-        manaRegenAccumulator = 0f;
-        if (regenCoroutine != null)
-        {
-            StopCoroutine(regenCoroutine);
-        }
-        regenCoroutine = StartCoroutine(ManaRegenRoutine());
-    }
-
-    private IEnumerator ManaRegenRoutine()
-    {
-        // 1. Wait for the required delay after mana consumption
-        yield return new WaitForSeconds(REGEN_DELAY);
-
-        // 2. Start regenerating mana continuously
-        while (GameData.playerMana < GameData.MAX_PLAYER_MANA)
-        {
-            float manaToAccumulate = MANA_PER_SECOND * Time.deltaTime;
-            manaRegenAccumulator += manaToAccumulate;
-
-            if (manaRegenAccumulator >= 1f)
-            {
-                int manaToCharge = Mathf.FloorToInt(manaRegenAccumulator);
-                GameData.ChargePlayerMana(manaToCharge);
-                manaRegenAccumulator -= manaToCharge;
-            }
-
-            yield return null;
-        }
-
-        manaRegenAccumulator = 0f;
-    } */
-    //primary and secondary fire need to be added here:
 }

@@ -18,7 +18,9 @@ public class InputManager : MonoBehaviour
         //anytime onFoot.jump performed, use callback context to call motor.Jump()
         onFoot.Jump.performed += ctx => motor.Jump();
         look = GetComponent<PlayerLook>();
-        onFoot.Crouch.performed += ctx => motor.Crouch();
+        //onFoot.Crouch.performed += ctx => motor.Crouch();
+        onFoot.Crouch.performed += ctx => motor.StartCrouch();
+        onFoot.Crouch.canceled += ctx => motor.EndCrouch();
         onFoot.Teleport.performed += ctx => motor.Teleport(onFoot.Movement.ReadValue<Vector2>());
         // used to be: onFoot.Teleport.performed += ctx => motor.Teleport();
     }
