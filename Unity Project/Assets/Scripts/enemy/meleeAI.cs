@@ -56,6 +56,15 @@ public class MeleeAI : MonoBehaviour
         if (playerInSightRange && playerInAttackRange) AttackPlayer();
     }
 
+    private void FixedUpdate()
+    {
+        // Check for hit ONLY during the jump phase
+        if (isJumping && !damageDealtThisJump)
+        {
+            CheckForHit();
+        }
+    }
+
     private void SearchWalkPoint()
     {
         // calc random point in range
@@ -136,23 +145,6 @@ public class MeleeAI : MonoBehaviour
         }
     }
 
-    private void OnCollisionEnter(Collision collision)
-    {
-        
-        if (isJumping && !damageDealtThisJump && collision.gameObject.CompareTag("Player"))
-        {
-            // Apply damage to the player
-            // You are using a static class GameData, so call the method/variable directly
-            GameData.playerHealth -= attackDamage;
-
-            // Log for confirmation (optional)
-            Debug.Log($"MeleeAI hit player! Damage dealt: {attackDamage}. Player Health remaining: {GameData.playerHealth}");
-
-            // Set flag to prevent further hits until the next jump
-            damageDealtThisJump = true;
-
-        }
-    }
 
     // New method to restore NavMeshAgent control after the jump
     private void EndJump()
@@ -187,5 +179,33 @@ public class MeleeAI : MonoBehaviour
         Gizmos.DrawWireSphere(transform.position, AttackRange);
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, sightRange);
+    }
+
+    private void CheckForHit()
+    {
+        // sphere checks hit instead of colliders, more consistent
+        Collider[] hitPlayers = Physics.OverlapSphere(transform.position, 1.5f, whatIsPlayer);
+
+        // Adjust 1.5f to be the size of attack "hitbox" radius during the jump.
+
+        foreach (Collider playerCollider in hitPlayers)
+        {
+            // Check to ensure we only hit the player, although LayerMask helps here
+            if (playerCollider.CompareTag("Player"))
+            {
+                if (isJumping && !damageDealtThisJump)
+                {
+                    // Damage Logic
+                    GameData.playerHealth -= attackDamage;
+                    Debug.Log($"MeleeAI hit player from sphere! Damage dealt: {attackDamage}.");
+
+                    // Set flag to prevent further hits until the next jump
+                    damageDealtThisJump = true;
+
+                    // You may want to stop checking after the hit:
+                    return;
+                }
+            }
+        }
     }
 }
