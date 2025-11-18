@@ -18,7 +18,7 @@ public class MeleeAI : MonoBehaviour
     // Attacking
     public float timeBetweenAttacks;
     bool alreadyAttacked;
-    public int attackDamage = 4; // Damage to deal on hit
+    public int attackDamage = 3; // Damage to deal on hit
 
     // Melee Attack Specifics
     public float jumpForce = 5f; // How high/fast the enemy jumps

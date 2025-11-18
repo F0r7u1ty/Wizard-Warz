@@ -33,6 +33,11 @@ public class PlayerMotor : MonoBehaviour
         {
             Debug.LogError("PlayerCamera Transform is not assigned to the TestPlayerMotor script in the Inspector.");
         }
+        //lock mouse to camera
+        Cursor.lockState = CursorLockMode.Locked;
+
+        // Hide the cursor
+        Cursor.visible = false;
         // Start the continuous mana regeneration routine
         //regenCoroutine = StartCoroutine(GameData.ResetRegenDelay());
         GameData.ResetRegenDelay();
@@ -59,6 +64,19 @@ public class PlayerMotor : MonoBehaviour
             {
                 lerpCrouch = false;
                 crouchTimer = 0f;
+            }
+        }
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (Cursor.lockState == CursorLockMode.Locked)
+            {
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+            }
+            else
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
             }
         }
     }

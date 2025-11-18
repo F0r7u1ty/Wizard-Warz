@@ -34,10 +34,10 @@ public class WizardStaff : MonoBehaviour
 
     void Awake()
     {
-        /*if (firePoint == null)
+        if (firePoint == null)
         {
             Debug.LogError("FirePoint Transform is not assigned!");
-        } */
+        }
 
         // Get the LineRenderer component if it wasn't assigned in the inspector
         if (lineRenderer == null)
@@ -112,12 +112,12 @@ public class WizardStaff : MonoBehaviour
     IEnumerator DrawBeam(Vector3 endPoint)
     {
         // 1. Set the beam's start point (the camera/staff muzzle) and end point (the hit location)
-        lineRenderer.SetPosition(0, cam.transform.position); // Start point
-        lineRenderer.SetPosition(1, endPoint); // End point
+        //lineRenderer.SetPosition(0, cam.transform.position); // Start point
+        //lineRenderer.SetPosition(1, endPoint); // End point
 
-        /*// 1. Set the beam's start point to the designated firePoint
-        lineRenderer.SetPosition(0, firePoint.position); // <--- CHANGE IS HERE
-        lineRenderer.SetPosition(1, endPoint); */
+        // 1. Set the beam's start point to the designated firePoint
+        lineRenderer.SetPosition(0, firePoint.position); 
+        lineRenderer.SetPosition(1, endPoint); 
         // ^^^^ DO NOT TOUCH, this will be replacing original step 1 once we have staff, this adjusts where line starts being drawn
         //Hit logic is the rayCast, so this will still go exactly where we're aiming our crosshair, it'll just draw from hit point with this.
 
