@@ -66,19 +66,6 @@ public class PlayerMotor : MonoBehaviour
                 crouchTimer = 0f;
             }
         }
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            if (Cursor.lockState == CursorLockMode.Locked)
-            {
-                Cursor.lockState = CursorLockMode.None;
-                Cursor.visible = true;
-            }
-            else
-            {
-                Cursor.lockState = CursorLockMode.Locked;
-                Cursor.visible = false;
-            }
-        }
     }
 
     public void ProcessMove(Vector2 input)

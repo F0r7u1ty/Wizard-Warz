@@ -12,7 +12,7 @@ public static class GameData
     public static int playerMana = MAX_PLAYER_MANA;
     public static int numJumps = 0;
     public static float manaRegenAccumulator = 0f;
-
+    public static bool menuOpen = false;
     public static float REGEN_DELAY = 0.6f;
 
     public static float MANA_PER_SECOND = 15f;

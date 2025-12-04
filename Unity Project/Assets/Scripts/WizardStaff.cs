@@ -51,6 +51,7 @@ public class WizardStaff : MonoBehaviour
 
     void Update()
     {
+        if (GameData.menuOpen) return;
         // *** REVERTED: Use GetMouseButtonDown for single-shot (tap-to-fire) ***
         if (Input.GetMouseButtonDown(leftMouseButton) && Time.time >= nextFireTime)
         {
@@ -70,6 +71,7 @@ public class WizardStaff : MonoBehaviour
     }
     void Primary()
     {
+        if (GameData.menuOpen) return; //menu checker
         if (GameData.ExhaustPlayerMana(10))
         {
             RaycastHit hit;
@@ -135,6 +137,7 @@ public class WizardStaff : MonoBehaviour
 
     void Secondary()
     {
+        if (GameData.menuOpen) return; //menu checker
         PlayerLook yummers = player.transform.GetComponent<PlayerLook>();
 
         int manaRequirement = 10;
@@ -190,6 +193,6 @@ public class WizardStaff : MonoBehaviour
         else
         {
             yummers.slugCam = false;
-        }
+        }        
     }
 }

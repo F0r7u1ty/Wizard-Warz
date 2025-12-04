@@ -35,6 +35,7 @@ public class WizardWand : MonoBehaviour
 
     private void Update()
     {
+        if (GameData.menuOpen) return;
         MyInput();
     }
 
@@ -53,6 +54,7 @@ public class WizardWand : MonoBehaviour
 
     private void Primary()
     {
+        if (GameData.menuOpen) return; // menu checker
         readyToShoot = false;
 
         // 1. Determine the target point and check for heat-seek target
@@ -113,7 +115,7 @@ public class WizardWand : MonoBehaviour
         {
             Invoke("ResetPrimaryShot", timeBetweenShooting);
             allowInvoke = false;
-        }
+        }        
     }
 
     private void ResetPrimaryShot()
