@@ -8,6 +8,8 @@ public class HealthChecker : MonoBehaviour
         if (GameData.playerHealth <= 0)
         {
             SceneManager.LoadScene("LossScene");
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
         }
     }
 }
