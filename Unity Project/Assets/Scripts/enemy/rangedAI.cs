@@ -19,6 +19,7 @@ public class rangedAI : MonoBehaviour
     public float timeBetweenAttacks;
     bool alreadyAttacked;
     public GameObject projectile;
+    public Transform firePoint;
 
     //States
     public float sightRange, AttackRange;
@@ -72,24 +73,41 @@ public class rangedAI : MonoBehaviour
     {
         agent.SetDestination(player.position);
     }
-
     private void AttackPlayer()
     {
-        //make sure enemy doesn't move
-        agent.SetDestination(transform.position);
-        transform.LookAt(player);
+            agent.SetDestination(transform.position);
+            transform.LookAt(player);
 
-        if (!alreadyAttacked)
-        {
-            //attack code:
-            Rigidbody rb = Instantiate(projectile, transform.position, Quaternion.identity).GetComponent<Rigidbody>();
-            rb.AddForce(transform.forward * 32f, ForceMode.Impulse);
-            rb.AddForce(transform.up * 4f, ForceMode.Impulse);
+            if (!alreadyAttacked)
+            {
+                Vector3 spawnPos = (firePoint != null) ? firePoint.position : transform.position;
+                // Aim at player (optionally aim at player's chest or head: add Vector3.up * 1.2f)
+                Vector3 targetPos = player.position + Vector3.up * 1.0f; // tweak vertical aim if needed
+                Vector3 aimDir = (targetPos - spawnPos).normalized;
 
-            alreadyAttacked = true;
-            Invoke(nameof(ResetAttack), timeBetweenAttacks);
-        }
+                // spawn with rotation so forward points along aimDir
+                Quaternion spawnRot = Quaternion.LookRotation(aimDir, Vector3.up);
+
+                Rigidbody rb = Instantiate(projectile, spawnPos, spawnRot).GetComponent<Rigidbody>();
+
+                // Use velocity for consistent shot instead of AddForce (you can still use AddForce if you prefer)
+                float shotSpeed = 40f;//32f;
+                rb.linearVelocity = aimDir * shotSpeed;
+                // small upward arc if you want:
+                rb.linearVelocity += Vector3.up * 4f; // or tweak as needed
+                                                      // rotate aimDir by a few degrees to the right
+                float degreesCorrection = 3f;
+                //Quaternion correction = Quaternion.Euler(0f, degreesCorrection, 0f);
+                Quaternion correction = Quaternion.Euler(-2f, degreesCorrection, 0f);
+
+                Vector3 correctedAim = correction * aimDir;
+                rb.linearVelocity = correctedAim * shotSpeed;
+
+                alreadyAttacked = true;
+                Invoke(nameof(ResetAttack), timeBetweenAttacks);
+            }
     }
+
     private void ResetAttack()
     {
         alreadyAttacked = false;

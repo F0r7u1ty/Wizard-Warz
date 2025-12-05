@@ -39,8 +39,9 @@ public class MeleeAI : MonoBehaviour
         }
     }
 
-    private void Update()
+    /*private void Update()
     {
+
         // Prevent movement logic if the enemy is currently executing the jump
         if (isJumping) return;
 
@@ -53,8 +54,51 @@ public class MeleeAI : MonoBehaviour
         if (playerInSightRange && !playerInAttackRange) ChasePlayer();
         // A crucial difference: for a jump attack, you might want to only jump
         // when in attack range AND when the NavMeshAgent is stopped.
+        if (playerInSightRange && playerInAttackRange) AttackPlayer(); 
+    } */
+    private void Update()
+    {
+        // If enemy sees the player, rotate toward them
+        /*if (playerInSightRange && !isJumping)
+        {
+            Vector3 lookDirection = (player.position - transform.position).normalized;
+            lookDirection.y = 0; // Prevent tilting up/down
+            transform.rotation = Quaternion.Slerp(
+                transform.rotation,
+                Quaternion.LookRotation(lookDirection),
+                10f * Time.deltaTime
+            );
+        } this is for right shoulder coming toward player*/
+
+        if (playerInSightRange && !isJumping)
+        {
+            Vector3 dir = (player.position - transform.position).normalized;
+            dir.y = 0; // keep upright
+
+            // Base rotation looking directly at player
+            Quaternion lookRot = Quaternion.LookRotation(dir);
+
+            // Apply a +90° rotation to the RIGHT (Y axis)
+            Quaternion adjustedRot = lookRot * Quaternion.Euler(0, 90f, 0);
+
+            transform.rotation = Quaternion.Slerp(
+                transform.rotation,
+                adjustedRot,
+                10f * Time.deltaTime
+            );
+        }
+
+        if (isJumping) return;
+
+        // Check for sight and attack range
+        playerInSightRange = Physics.CheckSphere(transform.position, sightRange, whatIsPlayer);
+        playerInAttackRange = Physics.CheckSphere(transform.position, AttackRange, whatIsPlayer);
+
+        if (!playerInSightRange && !playerInAttackRange) Patroling();
+        if (playerInSightRange && !playerInAttackRange) ChasePlayer();
         if (playerInSightRange && playerInAttackRange) AttackPlayer();
     }
+
 
     private void FixedUpdate()
     {
@@ -105,8 +149,14 @@ public class MeleeAI : MonoBehaviour
         agent.SetDestination(transform.position);
 
         // Look at the player before jumping
-        transform.LookAt(player);
+        //transform.LookAt(player); goblin right shoulder is his "forward" so we do the replacement below:
+        Vector3 dir = (player.position - transform.position).normalized;
+        dir.y = 0f; // keep upright
+        Quaternion lookRot = Quaternion.LookRotation(dir);
+        Quaternion adjustedRot = lookRot * Quaternion.Euler(0f, 90f, 0f);
 
+        // Snap or smooth rotate before jump. Use Slerp for smoothness:
+        transform.rotation = Quaternion.Slerp(transform.rotation, adjustedRot, 10f * Time.deltaTime);
         if (!alreadyAttacked)
         {
             // Start the jump attack logic
