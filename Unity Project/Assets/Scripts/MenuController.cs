@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.EventSystems;
 
 public class MenuController : MonoBehaviour
 {
@@ -36,20 +37,19 @@ public class MenuController : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked; // adjust to your input setup
         Cursor.visible = false;
         GameData.menuOpen = false;
-    }
+    } 
 
     public void BackToMainMenu()
     {
         Time.timeScale = 1f;
-        SceneManager.LoadScene("StartScene"); // change name as needed
+        SceneManager.LoadScene("StartScene");
+        // this allows for replayability, if you go to the menu then start the game it should all act the same now.
+        GameData.playerHealth = GameData.MAX_PLAYER_HEALTH;
+        GameData.playerMana = GameData.MAX_PLAYER_MANA;
     }
 
     public void QuitGame()
-    {
-#if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-#else
-        Application.Quit();
-#endif
+    { //don't want this functionality for demo day tomorrow
+        //Application.Quit();
     }
 }
