@@ -1,8 +1,10 @@
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class WizardWand : MonoBehaviour
 {
     public GameObject bullet;
+    public GameObject star;
 
     public float shootForce, upwardForce;
 
@@ -16,6 +18,18 @@ public class WizardWand : MonoBehaviour
 
     // The Transform we will use as the bullet's origin
     public Transform firePoint;
+    // secondary bullet origins
+    public Transform frontPoint;
+    public Transform LowerPoint;
+    public Transform LowerRightPoint;
+    public Transform LowerLeftPoint;
+
+    public Transform rightFrontPoint;
+    public Transform leftFrontPoint;
+
+    public Transform upperFrontPoint;
+    public Transform upperRightFrontPoint;
+    public Transform upperLeftFrontPoint;
 
     // --- NEW VARIABLES FOR HEAT-SEEKING & DAMAGE ---
     [Header("Heat Seek and Damage")]
@@ -44,11 +58,17 @@ public class WizardWand : MonoBehaviour
     {
         // Use Mouse0 (left click) for the primary attack
         shooting = Input.GetKeyDown(KeyCode.Mouse0);
+        bool shootingSecondary = Input.GetKeyDown(KeyCode.Mouse1);
 
         // Ensure we are ready to shoot and can afford the mana cost (Assuming GameData.ExhaustPlayerMana exists)
         if (readyToShoot && shooting && GameData.ExhaustPlayerMana(10))
         {
             Primary();
+        }
+
+        if (shootingSecondary && GameData.ExhaustPlayerMana(10))
+        {
+            Secondary();
         }
     }
 
@@ -123,4 +143,48 @@ public class WizardWand : MonoBehaviour
         readyToShoot = true;
         allowInvoke = true;
     }
+
+    private void Secondary()
+    {
+
+        GameObject starFront = Instantiate(star, frontPoint.position, Quaternion.identity);
+        GameObject starRightFront = Instantiate(star, rightFrontPoint.position, Quaternion.identity);
+        GameObject starLeftFront = Instantiate(star, leftFrontPoint.position, Quaternion.identity);
+
+        GameObject starUpperFront = Instantiate(star, upperFrontPoint.position, Quaternion.identity);
+        GameObject starUpperRightFront = Instantiate(star, upperRightFrontPoint.position, Quaternion.identity);
+        GameObject starUpperLeftFront = Instantiate(star, upperLeftFrontPoint.position, Quaternion.identity);
+
+        GameObject starLower = Instantiate(star, LowerPoint.position, Quaternion.identity);
+        GameObject starLowerRight = Instantiate(star, LowerRightPoint.position, Quaternion.identity);
+        GameObject starLowerLeft = Instantiate(star, LowerLeftPoint.position, Quaternion.identity);
+
+
+        Vector3 starFrontDir = frontPoint.forward;
+        Vector3 starRightFrontDir = -rightFrontPoint.forward;
+        Vector3 starLeftFrontDir = -leftFrontPoint.forward;
+
+        Vector3 starUpperFrontDir = -upperFrontPoint.forward;
+        Vector3 starUpperRightFrontDir = upperRightFrontPoint.forward;
+        Vector3 starUpperLeftFrontDir = upperLeftFrontPoint.forward;
+
+        Vector3 starLowerDir = -LowerPoint.forward;
+        Vector3 starLowerRightDir = LowerRightPoint.forward;
+        Vector3 starLowerLeftDir = LowerLeftPoint.forward;
+
+
+        starFront.GetComponent<StarBullet>().Fire(starFrontDir);
+        starRightFront.GetComponent<StarBullet>().Fire(starRightFrontDir);
+        starLeftFront.GetComponent<StarBullet>().Fire(starLeftFrontDir);
+
+        starUpperFront.GetComponent<StarBullet>().Fire(starUpperFrontDir);
+        starUpperRightFront.GetComponent<StarBullet>().Fire(starUpperRightFrontDir);
+        starUpperLeftFront.GetComponent<StarBullet>().Fire(starUpperLeftFrontDir);
+
+        starLower.GetComponent<StarBullet>().Fire(starLowerDir);
+        starLowerRight.GetComponent<StarBullet>().Fire(starLowerRightDir);
+        starLowerLeft.GetComponent<StarBullet>().Fire(starLowerLeftDir);
+
+    }
+
 }
