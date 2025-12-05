@@ -15,6 +15,7 @@ public class StartController : MonoBehaviour
         GameData.playerHealth = GameData.MAX_PLAYER_HEALTH;
         GameData.playerMana = GameData.MAX_PLAYER_MANA;
         SceneManager.LoadScene("gameplay");
+        GameData.numEnemies = 15;
     }
 
     // Called when clicking the Quit button
@@ -30,6 +31,7 @@ public class StartController : MonoBehaviour
     public void BackToMenu()
     {
         SceneManager.LoadScene("StartScene");
+        GameData.numEnemies = 15;
     }
 
     private IEnumerator ShowTempMessage()

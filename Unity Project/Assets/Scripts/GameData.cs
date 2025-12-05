@@ -6,7 +6,7 @@ using UnityEngine;
 public static class GameData
 {
     // primitives
-    public const int MAX_PLAYER_HEALTH = 100;
+    public const int MAX_PLAYER_HEALTH = 100; //just for easy "balance changes" to help people play tomorrow
     public static int playerHealth = MAX_PLAYER_HEALTH;
     public const int MAX_PLAYER_MANA = 100;
     public static int playerMana = MAX_PLAYER_MANA;
@@ -14,7 +14,7 @@ public static class GameData
     public static float manaRegenAccumulator = 0f;
     public static bool menuOpen = false;
     public static float REGEN_DELAY = 0.6f;
-
+    public static int numEnemies = 15;
     public static float MANA_PER_SECOND = 15f;
 
     //health functions

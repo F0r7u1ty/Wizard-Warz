@@ -96,8 +96,8 @@ public class PlayerMotor : MonoBehaviour
             playerVelocity.y = Mathf.Sqrt(jumpHeight * -3.0f * gravity);
             GameData.numJumps = 1;
         }
-        //else if (GameData.playerMana >= 3 && GameData.numJumps == 1) if we want doubleJump to consume mana
-          else if (GameData.numJumps == 1)
+        else if (GameData.playerMana >= 3 && GameData.numJumps == 1) //if we want doubleJump to consume mana
+          //else if (GameData.numJumps == 1)
         {
             //GameData.ExhaustPlayerMana(3);
             //GameData.playerMana -= 3;

@@ -46,6 +46,7 @@ public class MenuController : MonoBehaviour
         // this allows for replayability, if you go to the menu then start the game it should all act the same now.
         GameData.playerHealth = GameData.MAX_PLAYER_HEALTH;
         GameData.playerMana = GameData.MAX_PLAYER_MANA;
+        GameData.numEnemies = 15;
     }
 
     public void QuitGame()

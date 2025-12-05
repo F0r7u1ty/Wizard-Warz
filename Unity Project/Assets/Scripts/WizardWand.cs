@@ -61,7 +61,7 @@ public class WizardWand : MonoBehaviour
         bool shootingSecondary = Input.GetKeyDown(KeyCode.Mouse1);
 
         // Ensure we are ready to shoot and can afford the mana cost (Assuming GameData.ExhaustPlayerMana exists)
-        if (readyToShoot && shooting && GameData.ExhaustPlayerMana(10))
+        if (readyToShoot && shooting && GameData.ExhaustPlayerMana(8))
         {
             Primary();
         }

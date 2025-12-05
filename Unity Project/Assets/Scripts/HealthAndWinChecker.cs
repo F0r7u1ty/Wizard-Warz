@@ -11,5 +11,13 @@ public class HealthChecker : MonoBehaviour
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
         }
+
+        if (GameData.numEnemies <= 0)
+        {
+            SceneManager.LoadScene("WinScene");
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+            GameData.numEnemies = 15;
+        }
     }
 }

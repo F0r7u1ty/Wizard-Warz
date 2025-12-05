@@ -9,7 +9,7 @@ public class MeleeAI : MonoBehaviour
     public LayerMask whatIsGround, whatIsPlayer;
 
     public int health;
-
+    private bool isDead = false;
     // Patrolling
     public Vector3 walkPoint;
     bool walkPointSet;
@@ -215,7 +215,19 @@ public class MeleeAI : MonoBehaviour
     public void TakeDamage(int damage)
     {
         health -= damage;
-        if (health <= 0) Invoke(nameof(DestroyEnemy), 0.5f);
+        if (health <= 0 && !isDead)
+        {
+            isDead = true;
+            GetComponent<Collider>().enabled = false;
+            GameData.numEnemies--;
+            Invoke(nameof(DestroyEnemy), 0.5f);
+        }
+        /*health -= damage;
+        if (health <= 0)
+        {
+            Invoke(nameof(DestroyEnemy), 0.5f);
+            GameData.numEnemies--;
+        }*/
     }
 
     private void DestroyEnemy()

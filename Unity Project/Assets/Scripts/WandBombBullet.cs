@@ -20,12 +20,12 @@ public class WandBombBullet : MonoBehaviour
         if (collision.transform.tag == "MeleeEnemy")
         {
             MeleeAI target = collision.transform.GetComponent<MeleeAI>();
-            if (target != null) target.TakeDamage(20);
+            if (target != null) target.TakeDamage(6);
         }
         if (collision.transform.tag == "RangeEnemy")
         {
             rangedAI target = collision.transform.GetComponent<rangedAI>();
-            if (target != null) target.TakeDamage(20);
+            if (target != null) target.TakeDamage(6);
         }
         Destroy(gameObject);
     }

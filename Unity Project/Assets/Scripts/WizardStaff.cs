@@ -72,7 +72,7 @@ public class WizardStaff : MonoBehaviour
     void Primary()
     {
         if (GameData.menuOpen) return; //menu checker
-        if (GameData.ExhaustPlayerMana(10))
+        if (GameData.ExhaustPlayerMana(6))
         {
             RaycastHit hit;
             // The raycast is the hitscan logic (instant hit)
@@ -140,7 +140,7 @@ public class WizardStaff : MonoBehaviour
         if (GameData.menuOpen) return; //menu checker
         PlayerLook yummers = player.transform.GetComponent<PlayerLook>();
 
-        int manaRequirement = 10;
+        int manaRequirement = 8;
         SecondaryCounter += Time.deltaTime;
         if (SecondaryCounter >= .5f)
         {
