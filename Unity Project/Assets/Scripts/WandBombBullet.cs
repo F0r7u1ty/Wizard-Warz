@@ -2,15 +2,31 @@ using UnityEngine;
 
 public class WandBombBullet : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public float speed = 25f;
+    private Rigidbody rb;
+
+    void Awake()
     {
-        //Destroy(gameObject, 3f);
+        rb = GetComponent<Rigidbody>();
     }
 
-    // Update is called once per frame
-    void Update()
+    public void Fire(Vector3 direction)
     {
-        
+        rb.linearVelocity = direction.normalized * speed;
+    }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        if (collision.transform.tag == "MeleeEnemy")
+        {
+            MeleeAI target = collision.transform.GetComponent<MeleeAI>();
+            if (target != null) target.TakeDamage(20);
+        }
+        if (collision.transform.tag == "RangeEnemy")
+        {
+            rangedAI target = collision.transform.GetComponent<rangedAI>();
+            if (target != null) target.TakeDamage(20);
+        }
+        Destroy(gameObject);
     }
 }

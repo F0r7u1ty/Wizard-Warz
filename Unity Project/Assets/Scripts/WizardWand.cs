@@ -128,7 +128,7 @@ public class WizardWand : MonoBehaviour
         currentBullet.GetComponent<Rigidbody>().AddForce(directionWithSpread.normalized * shootForce, ForceMode.Impulse);
         currentBullet.GetComponent<Rigidbody>().AddForce(cam.transform.up * upwardForce, ForceMode.Impulse);
 
-        Destroy(currentBullet, 3f); // will be removed in future
+        //Destroy(currentBullet, 3f); // will be removed in future
 
         // 7. Reset for the next shot
         if (allowInvoke)
